@@ -1,0 +1,9 @@
+node_modules/
+.session.json
+*.backup
+*.bak
+/tmp/
+*.log
+.opencode/
+target/
+package-lock.json
