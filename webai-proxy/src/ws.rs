@@ -6,16 +6,6 @@ use futures_util::{SinkExt, StreamExt};
 
 use crate::state::{AppState, ExtSocket, next_conn_id};
 
-pub fn extract_message_response(text: &str) -> Result<(String, String), String> {
-    let parsed: serde_json::Value = serde_json::from_str(text)
-        .map_err(|e| format!("invalid json: {}", e))?;
-    let request_id = parsed.get("requestId")
-        .and_then(|v| v.as_str())
-        .ok_or("missing requestId")?
-        .to_string();
-    Ok((request_id, text.to_string()))
-}
-
 pub async fn start_ws_server(state: Arc<AppState>, port: u16) {
     let addr = format!("127.0.0.1:{}", port);
 
@@ -140,20 +130,6 @@ mod tests {
     use tokio::sync::oneshot;
 
     #[tokio::test]
-    async fn test_extract_request_id() {
-        let msg = r#"{"requestId":"req-1","success":true,"data":{"response":"ok"}}"#;
-        let result = super::extract_message_response(msg);
-        let (req_id, _) = result.unwrap();
-        assert_eq!(req_id, "req-1");
-    }
-
-    #[tokio::test]
-    async fn test_extract_invalid_json() {
-        let result = super::extract_message_response("not json");
-        assert!(result.is_err());
-    }
-
-    #[tokio::test]
     async fn test_pending_request_routing() {
         use crate::state::AppState;
         use std::sync::Arc;
@@ -163,21 +139,21 @@ mod tests {
             pending: Arc::new(Mutex::new(HashMap::new())),
             extension_socket: Arc::new(Mutex::new(None)),
             active_session: Arc::new(Mutex::new(None)),
-            auth_token: "test".into(),
         });
 
         let (tx, rx) = oneshot::channel();
         state.pending.lock().await.insert("req-1".into(), tx);
 
         let msg = r#"{"requestId":"req-1","success":true,"data":{"response":"hello"}}"#;
-        let (request_id, response_text) = super::extract_message_response(msg).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(msg).unwrap();
+        let request_id = parsed.get("requestId").and_then(|v| v.as_str()).unwrap().to_string();
         let mut pending = state.pending.lock().await;
         let sender = pending.remove(&request_id);
         drop(pending);
 
         assert!(sender.is_some(), "should find pending sender");
 
-        sender.unwrap().send(response_text).unwrap();
+        sender.unwrap().send(msg.to_string()).unwrap();
         let result = rx.await.unwrap();
         assert!(result.contains("hello"));
     }

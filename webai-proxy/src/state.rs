@@ -23,7 +23,6 @@ pub struct AppState {
     pub pending: PendingRequests,
     pub extension_socket: ExtensionSocket,
     pub active_session: Arc<Mutex<Option<String>>>,
-    pub auth_token: String,
 }
 
 #[cfg(test)]
@@ -43,8 +42,7 @@ mod tests {
             pending: Arc::new(Mutex::new(HashMap::new())),
             extension_socket: Arc::new(Mutex::new(None)),
             active_session: Arc::new(Mutex::new(None)),
-            auth_token: "test-token".into(),
         };
-        assert_eq!(state.auth_token, "test-token");
+        let _ = state;
     }
 }

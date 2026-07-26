@@ -11,10 +11,6 @@ pub fn extract_bearer_token(headers: &HeaderMap) -> Option<String> {
     value.strip_prefix("Bearer ").map(|s| s.to_string())
 }
 
-pub fn validate_token(token: &str, expected: &str) -> bool {
-    token == expected
-}
-
 #[cfg(test)]
 mod tests {
     use axum::http::HeaderMap;
@@ -52,13 +48,4 @@ mod tests {
         assert_eq!(super::extract_bearer_token(&headers), None);
     }
 
-    #[test]
-    fn test_validate_token_ok() {
-        assert!(super::validate_token("abc", "abc"));
-    }
-
-    #[test]
-    fn test_validate_token_fail() {
-        assert!(!super::validate_token("abc", "xyz"));
-    }
 }

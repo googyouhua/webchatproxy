@@ -55,7 +55,6 @@ async fn main() {
                 pending: Arc::new(tokio::sync::Mutex::new(std::collections::HashMap::new())),
                 extension_socket: Arc::new(tokio::sync::Mutex::new(None)),
                 active_session: Arc::new(tokio::sync::Mutex::new(None)),
-                auth_token: token.clone(),
             });
 
             let log_path = log_file.unwrap_or_else(log::default_log_path);

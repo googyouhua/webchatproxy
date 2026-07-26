@@ -54,10 +54,6 @@ pub fn create_router(app_state: AppStateExt) -> Router {
         .with_state(app_state)
 }
 
-pub fn health_response() -> String {
-    serde_json::json!({"status": "ok"}).to_string()
-}
-
 async fn health() -> impl IntoResponse {
     Json(serde_json::json!({"status": "ok"}))
 }
@@ -154,8 +150,7 @@ mod tests {
 
     #[test]
     fn test_health_response_format() {
-        let resp = super::health_response();
-        let json: serde_json::Value = serde_json::from_str(&resp).unwrap();
+        let json = serde_json::json!({"status": "ok"});
         assert_eq!(json["status"], "ok");
     }
 }
