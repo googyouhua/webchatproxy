@@ -2,6 +2,8 @@
 comet_change: create-webai-proxy
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-07-26-create-webai-proxy
+status: final
 ---
 
 # webai-proxy Technical Design
