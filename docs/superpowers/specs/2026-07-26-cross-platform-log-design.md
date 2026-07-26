@@ -2,6 +2,8 @@
 comet_change: cross-platform-support
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-07-26-cross-platform-support
+status: final
 ---
 
 # Cross-Platform Logger Design
