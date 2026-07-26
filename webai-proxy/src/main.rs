@@ -29,9 +29,12 @@ enum Command {
         /// Authentication token (optional, empty = no auth)
         #[arg(long, env = "WEBAI_PROXY_TOKEN", default_value = "")]
         token: String,
-        /// Log file path
-        #[arg(long, default_value = "/tmp/webai-proxy.log")]
-        log_file: String,
+        /// Log file path (default: OS temp dir + webai-proxy.log)
+        #[arg(long, env = "WEBAI_PROXY_LOG_FILE")]
+        log_file: Option<String>,
+        /// Auto-generate a random auth token and print to stdout
+        #[arg(long, default_value_t = false)]
+        gen_token: bool,
     },
 }
 
@@ -40,7 +43,14 @@ async fn main() {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::Serve { http_port, ws_port, token, log_file } => {
+        Command::Serve { http_port, ws_port, token, log_file, gen_token } => {
+            let token = if gen_token && token.is_empty() {
+                let t = auth::generate_token();
+                println!("Generated auth token: {}", t);
+                t
+            } else {
+                token
+            };
             let state = Arc::new(state::AppState {
                 pending: Arc::new(tokio::sync::Mutex::new(std::collections::HashMap::new())),
                 extension_socket: Arc::new(tokio::sync::Mutex::new(None)),
@@ -48,8 +58,9 @@ async fn main() {
                 auth_token: token.clone(),
             });
 
-            let mut logger = log::Logger::new(&log_file);
-            logger.log(&format!("Starting webai-proxy (HTTP={}, WS={})", http_port, ws_port));
+            let log_path = log_file.unwrap_or_else(log::default_log_path);
+            log::init_global_logger(&log_path);
+            log::global_log(&format!("Starting webai-proxy (HTTP={}, WS={})", http_port, ws_port));
 
             let ws_state = state.clone();
             tokio::spawn(async move {
@@ -64,7 +75,7 @@ async fn main() {
             };
             let router = server::create_router(app_state);
             let addr = format!("0.0.0.0:{}", http_port);
-            logger.log(&format!("HTTP server listening on {}", addr));
+            log::global_log(&format!("HTTP server listening on {}", addr));
 
             let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
             axum::serve(listener, router).await.unwrap();

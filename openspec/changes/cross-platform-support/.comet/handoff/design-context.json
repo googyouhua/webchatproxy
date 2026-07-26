@@ -1,0 +1,13 @@
+{
+  "change": "cross-platform-support",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "44161d2def813fea8a56162e7967c4b22f7b95113d48030384e3c1c83521f213",
+  "files": [
+    { "path": "openspec/changes/cross-platform-support/proposal.md", "sha256": "12a5b20b18fe7c914513422ead4c840f161a35c25142731869d62517468fa926" },
+    { "path": "openspec/changes/cross-platform-support/design.md", "sha256": "64ad4743d1d589f660c858be01e4d36b8e6ba9d08f6a63b73f5af06351bdc5ec" },
+    { "path": "openspec/changes/cross-platform-support/tasks.md", "sha256": "0e1b9445f077b0b4e53225a5e8e0cfa88b54ecd9faaaf311205f851bcf147716" }
+  ]
+}
