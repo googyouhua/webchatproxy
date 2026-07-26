@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "AI Bridge",
+  "version": "1.7.1",
+  "description": "让终端 AI 编程助手通过浏览器与强模型对话",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "alarms",
+    "tabs",
+    "debugger"
+  ],
+  "host_permissions": [
+    "https://www.doubao.com/*",
+    "https://chat.openai.com/*",
+    "https://chatgpt.com/*",
+    "https://chat.deepseek.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.doubao.com/*",
+        "https://chat.openai.com/*",
+        "https://chatgpt.com/*",
+        "https://chat.deepseek.com/*"
+      ],
+      "js": ["default-configs.js", "content2.js", "debug-panel.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AI Bridge 设置"
+  }
+}
