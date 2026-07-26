@@ -22,24 +22,21 @@ pub async fn start_ws_server(state: Arc<AppState>, port: u16) {
     match TcpListener::bind(&addr).await {
         Ok(listener) => {
             eprintln!("WS server listening on {}", addr);
-            let mut logger = crate::log::Logger::new("/tmp/webai-proxy.log");
-            logger.log(&format!("WS server listening on {}", addr));
+            crate::log::global_log(&format!("WS server listening on {}", addr));
 
             while let Ok((stream, peer)) = listener.accept().await {
-                logger.log(&format!("Connection from {}", peer));
+                crate::log::global_log(&format!("Connection from {}", peer));
                 let state = state.clone();
-                tokio::spawn(async move {
-                    match accept_async(stream).await {
-                        Ok(ws_stream) => {
-                            let mut logger = crate::log::Logger::new("/tmp/webai-proxy.log");
-                            logger.log("WS connection established");
-                            handle_extension(state, ws_stream).await;
+                    tokio::spawn(async move {
+                        match accept_async(stream).await {
+                            Ok(ws_stream) => {
+                                crate::log::global_log("WS connection established");
+                                handle_extension(state, ws_stream).await;
+                            }
+                            Err(e) => {
+                                crate::log::global_log(&format!("WS handshake failed: {}", e));
+                            }
                         }
-                        Err(e) => {
-                            let mut logger = crate::log::Logger::new("/tmp/webai-proxy.log");
-                            logger.log(&format!("WS handshake failed: {}", e));
-                        }
-                    }
                 });
             }
         }
@@ -67,8 +64,7 @@ async fn handle_extension(
                 if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(&text) {
                     if parsed.get("type").and_then(|v| v.as_str()) == Some("log") {
                         let msg = parsed.get("message").and_then(|v| v.as_str()).unwrap_or("");
-                        let mut logger = crate::log::Logger::new("/tmp/webai-proxy.log");
-                        logger.log(&format!("[ext-log] {}", msg));
+                        crate::log::global_log(&format!("[ext-log] {}", msg));
                     }
                     if let Some(request_id) = parsed.get("requestId").and_then(|v| v.as_str()) {
                         let mut pending = state.pending.lock().await;

@@ -30,14 +30,33 @@ cargo build --release
 
 默认 HTTP 端口 `4319`，WS 端口 `9530`，无认证。更多选项见配置章节。
 
-### 3. 加载 Chrome 扩展
+### 3. Windows 用户
+
+```powershell
+# 构建（需要安装 Rust: https://rustup.rs）
+cd webai-proxy
+cargo build --release
+
+# 启动
+.\target\release\webai-proxy.exe serve
+
+# 带鉴权启动（自动生成 token）
+.\target\release\webai-proxy.exe serve --gen-token
+
+# curl 示例（PowerShell）
+curl.exe http://localhost:4319/health
+```
+
+日志文件默认在 `%TEMP%\webai-proxy.log`。若系统 temp 目录不在 `%TEMP%`（如通过 Linux 子系统），可用 `--log-file` 手动指定路径。
+
+### 4. 加载 Chrome 扩展
 
 1. 打开 Chrome → `chrome://extensions`
 2. 启用"开发者模式"
 3. "加载已解压的扩展程序" → 选择 `webai-proxy/chrome-extension/`
 4. 固定扩展图标到工具栏
 
-### 4. 配置扩展
+### 5. 配置扩展
 
 点击扩展图标，设置：
 - **服务器地址**: `ws://localhost:9530`（与 `--ws-port` 一致）
@@ -49,11 +68,11 @@ cargo build --release
 - 橙色 `...` — 连接中/重试中
 - 无 badge — 已断开
 
-### 5. 打开 DeepSeek
+### 6. 打开 DeepSeek
 
 浏览器中打开 https://chat.deepseek.com 并登录。保持标签页打开。
 
-### 6. 调用 API
+### 7. 调用 API
 
 ```bash
 curl http://localhost:4319/v1/chat/completions \
@@ -70,16 +89,21 @@ curl http://localhost:4319/v1/chat/completions \
 | `--http-port` | `WEBAI_PROXY_HTTP_PORT` | `4319` | HTTP API 端口 |
 | `--ws-port` | `WEBAI_PROXY_WS_PORT` | `9530` | WebSocket 端口（与扩展通信） |
 | `--token` | `WEBAI_PROXY_TOKEN` | `空` | API 鉴权 token，空=不鉴权 |
-| `--log-file` | 无 | `/tmp/webai-proxy.log` | 日志文件路径 |
+| `--gen-token` | 无 | `false` | 自动生成随机 token 并打印到控制台（与 `--token` 互斥） |
+| `--log-file` | `WEBAI_PROXY_LOG_FILE` | OS 临时目录（如 `/tmp/webai-proxy.log`、`%TEMP%\webai-proxy.log`） | 日志文件路径 |
 
 示例：
 
 ```bash
-# 自定义端口 + 开启鉴权
+# 自定义端口 + 开启鉴权（手动指定 token）
 ./target/release/webai-proxy serve \
   --http-port 8080 \
   --ws-port 9090 \
   --token sk-my-secret
+
+# 自动生成随机 token
+./target/release/webai-proxy serve --gen-token
+# 输出: Generated auth token: eee1ff23-654c-401d-9bf7-0100eaaaa65f
 
 # 使用环境变量
 export WEBAI_PROXY_TOKEN=sk-my-secret
@@ -213,7 +237,7 @@ curl http://localhost:4319/v1/chat/completions \
 
 ## 日志
 
-服务器日志同时输出到 stderr 和日志文件（默认 `/tmp/webai-proxy.log`）：
+服务器日志同时输出到 stderr 和日志文件（默认操作系统临时目录下的 `webai-proxy.log`，如 Linux `/tmp/webai-proxy.log`、Windows `%TEMP%\webai-proxy.log`）：
 
 ```
 [2026-07-26T12:00:00.123456789+08:00] HTTP server on 0.0.0.0:4319

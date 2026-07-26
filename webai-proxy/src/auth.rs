@@ -1,4 +1,9 @@
 use axum::http::HeaderMap;
+use uuid::Uuid;
+
+pub fn generate_token() -> String {
+    Uuid::new_v4().to_string()
+}
 
 pub fn extract_bearer_token(headers: &HeaderMap) -> Option<String> {
     let header = headers.get("Authorization")?;
@@ -13,6 +18,19 @@ pub fn validate_token(token: &str, expected: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use axum::http::HeaderMap;
+
+    #[test]
+    fn test_generate_token_is_non_empty() {
+        let t = super::generate_token();
+        assert!(!t.is_empty(), "token should not be empty");
+    }
+
+    #[test]
+    fn test_generate_token_is_unique() {
+        let a = super::generate_token();
+        let b = super::generate_token();
+        assert_ne!(a, b, "tokens should be unique");
+    }
 
     #[test]
     fn test_valid_bearer_token() {
