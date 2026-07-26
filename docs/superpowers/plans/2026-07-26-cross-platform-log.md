@@ -2,6 +2,7 @@
 change: cross-platform-support
 design-doc: docs/superpowers/specs/2026-07-26-cross-platform-log-design.md
 base-ref: 172a2a68a8e5b91dc189802de032280bb9df9d1d
+archived-with: 2026-07-26-cross-platform-support
 ---
 
 # Implementation Plan: Cross-Platform Logger
