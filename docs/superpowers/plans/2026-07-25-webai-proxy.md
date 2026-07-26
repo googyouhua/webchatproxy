@@ -2,11 +2,12 @@
 change: create-webai-proxy
 design-doc: docs/superpowers/specs/2026-07-25-webai-proxy-design.md
 base-ref: none
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 # webai-proxy Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Build a standalone Rust HTTP server + Chrome extension that exposes browser-based DeepSeek through OpenAI-compatible API.
 
@@ -14,6 +15,7 @@ base-ref: none
 
 **Tech Stack:** Rust (axum, tokio-tungstenite, clap), Chrome Extension MV3
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ## File Map
@@ -37,6 +39,7 @@ webai-proxy/
 │   └── default-configs.js
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 1: Project Scaffold
@@ -46,7 +49,7 @@ webai-proxy/
 - Create: `webai-proxy/src/state.rs`
 - Create: `webai-proxy/src/log.rs`
 
-- [ ] **Step 1: Create Cargo.toml**
+- [x] **Step 1: Create Cargo.toml**
 
 ```toml
 [package]
@@ -68,7 +71,7 @@ chrono = { version = "0.4", features = ["serde"] }
 futures-util = "0.3"
 ```
 
-- [ ] **Step 2: Create src/log.rs**
+- [x] **Step 2: Create src/log.rs**
 
 ```rust
 use chrono::Utc;
@@ -97,7 +100,7 @@ impl Logger {
 }
 ```
 
-- [ ] **Step 3: Create src/state.rs**
+- [x] **Step 3: Create src/state.rs**
 
 ```rust
 use std::collections::HashMap;
@@ -129,7 +132,7 @@ pub struct AppState {
 }
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git init webai-proxy && cd webai-proxy
@@ -137,6 +140,7 @@ git add Cargo.toml src/state.rs src/log.rs
 git commit -m "chore: scaffold webai-proxy Rust project"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 2: Auth Module
@@ -144,7 +148,7 @@ git commit -m "chore: scaffold webai-proxy Rust project"
 **Files:**
 - Create: `webai-proxy/src/auth.rs`
 
-- [ ] **Step 1: Create src/auth.rs**
+- [x] **Step 1: Create src/auth.rs**
 
 ```rust
 use axum::{
@@ -183,13 +187,14 @@ pub async fn auth_middleware(
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/auth.rs
 git commit -m "feat: add Bearer token auth middleware"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 3: WebSocket Server
@@ -197,7 +202,7 @@ git commit -m "feat: add Bearer token auth middleware"
 **Files:**
 - Create: `webai-proxy/src/ws.rs`
 
-- [ ] **Step 1: Create src/ws.rs**
+- [x] **Step 1: Create src/ws.rs**
 
 ```rust
 use std::sync::Arc;
@@ -329,13 +334,14 @@ async fn send_via_ext_socket(
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/ws.rs
 git commit -m "feat: add WebSocket server for extension connection"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 4: OpenAI Types
@@ -343,7 +349,7 @@ git commit -m "feat: add WebSocket server for extension connection"
 **Files:**
 - Create: `webai-proxy/src/openai.rs`
 
-- [ ] **Step 1: Create src/openai.rs**
+- [x] **Step 1: Create src/openai.rs**
 
 ```rust
 use serde::{Deserialize, Serialize};
@@ -450,13 +456,14 @@ impl ChatCompletionResponse {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/openai.rs
 git commit -m "feat: add OpenAI request/response types"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 5: Bridge — Message Translation
@@ -464,7 +471,7 @@ git commit -m "feat: add OpenAI request/response types"
 **Files:**
 - Create: `webai-proxy/src/bridge.rs`
 
-- [ ] **Step 1: Create src/bridge.rs**
+- [x] **Step 1: Create src/bridge.rs**
 
 ```rust
 use std::sync::Arc;
@@ -554,13 +561,14 @@ pub async fn send_to_extension(
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/bridge.rs
 git commit -m "feat: add HTTP→WS message bridge"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 6: HTTP Server (axum)
@@ -568,7 +576,7 @@ git commit -m "feat: add HTTP→WS message bridge"
 **Files:**
 - Create: `webai-proxy/src/server.rs`
 
-- [ ] **Step 1: Create src/server.rs**
+- [x] **Step 1: Create src/server.rs**
 
 ```rust
 use std::sync::Arc;
@@ -705,13 +713,14 @@ fn chunk_text(text: &str, chunk_size: usize) -> Vec<String> {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/server.rs
 git commit -m "feat: add axum HTTP server with chat completions endpoint"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 7: CLI Entry Point
@@ -719,7 +728,7 @@ git commit -m "feat: add axum HTTP server with chat completions endpoint"
 **Files:**
 - Create: `webai-proxy/src/main.rs`
 
-- [ ] **Step 1: Create src/main.rs**
+- [x] **Step 1: Create src/main.rs**
 
 ```rust
 mod auth;
@@ -797,7 +806,7 @@ async fn main() {
 }
 ```
 
-- [ ] **Step 2: Build and verify compilation**
+- [x] **Step 2: Build and verify compilation**
 
 ```bash
 cd webai-proxy
@@ -806,13 +815,14 @@ cargo build 2>&1
 
 Expected: `Compiling webai-proxy ... Finished dev [unoptimized + debuginfo]`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/main.rs
 git commit -m "feat: add CLI entry point with serve subcommand"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 8: Chrome Extension — Manifest + Background
@@ -821,7 +831,7 @@ git commit -m "feat: add CLI entry point with serve subcommand"
 - Create: `webai-proxy/chrome-extension/manifest.json`
 - Create: `webai-proxy/chrome-extension/background.js`
 
-- [ ] **Step 1: Create manifest.json**
+- [x] **Step 1: Create manifest.json**
 
 ```json
 {
@@ -851,7 +861,7 @@ git commit -m "feat: add CLI entry point with serve subcommand"
 }
 ```
 
-- [ ] **Step 2: Create background.js**
+- [x] **Step 2: Create background.js**
 
 ```javascript
 let ws = null;
@@ -1054,13 +1064,14 @@ function cleanText(text) {
 connect();
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add chrome-extension/manifest.json chrome-extension/background.js
 git commit -m "feat: add Chrome extension with WS + CDP support"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 9: Chrome Extension — Content Script + DeepSeek Support
@@ -1069,7 +1080,7 @@ git commit -m "feat: add Chrome extension with WS + CDP support"
 - Create: `webai-proxy/chrome-extension/content.js`
 - Create: `webai-proxy/chrome-extension/default-configs.js`
 
-- [ ] **Step 1: Create default-configs.js**
+- [x] **Step 1: Create default-configs.js**
 
 ```javascript
 const WEBAI_PROXY_DEFAULT_CONFIGS = {
@@ -1083,7 +1094,7 @@ const WEBAI_PROXY_DEFAULT_CONFIGS = {
 };
 ```
 
-- [ ] **Step 2: Create content.js**
+- [x] **Step 2: Create content.js**
 
 ```javascript
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -1221,18 +1232,19 @@ function sleep(ms) {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add chrome-extension/content.js chrome-extension/default-configs.js
 git commit -m "feat: add content script for DeepSeek DOM operations"
 ```
 
+archived-with: 2026-07-26-create-webai-proxy
 ---
 
 ### Task 10: Integration Test
 
-- [ ] **Step 1: Build Rust binary**
+- [x] **Step 1: Build Rust binary**
 
 ```bash
 cd webai-proxy && cargo build --release 2>&1
@@ -1240,7 +1252,7 @@ cd webai-proxy && cargo build --release 2>&1
 
 Expected: `Compiling webai-proxy ... Finished release [optimized] target(s)`
 
-- [ ] **Step 2: Quick health check**
+- [x] **Step 2: Quick health check**
 
 ```bash
 cd webai-proxy
@@ -1251,7 +1263,7 @@ curl -s http://localhost:4319/health
 
 Expected: `{"status":"ok"}`
 
-- [ ] **Step 3: Auth test**
+- [x] **Step 3: Auth test**
 
 ```bash
 curl -s http://localhost:4319/v1/chat/completions \
@@ -1261,7 +1273,7 @@ curl -s http://localhost:4319/v1/chat/completions \
 
 Expected: `401` (no token)
 
-- [ ] **Step 4: Models endpoint**
+- [x] **Step 4: Models endpoint**
 
 ```bash
 curl -s http://localhost:4319/v1/models \
@@ -1270,7 +1282,7 @@ curl -s http://localhost:4319/v1/models \
 
 Expected: model list JSON
 
-- [ ] **Step 5: Stop the server**
+- [x] **Step 5: Stop the server**
 
 ```bash
 kill %1 2>/dev/null; wait 2>/dev/null
