@@ -102,7 +102,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
-          merge-multiple: true
+      - name: Flatten and rename assets
+        run: |
+          for d in dist/*/; do
+            name=$(basename "$d")
+            for f in "$d"*; do
+              [ -f "$f" ] && cp "$f" "dist/$name"
+            done
+          done
+          rm -rf dist/*/
       - name: List release assets
         run: ls -lh dist/
       - name: Generate release notes
