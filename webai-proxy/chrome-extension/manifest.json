@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "webai-proxy",
+  "version": "0.1.0",
+  "description": "Bridge between webai-proxy HTTP server and browser AI chats",
+  "permissions": [
+    "storage",
+    "alarms",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://chat.deepseek.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chat.deepseek.com/*"],
+      "js": ["default-configs.js", "content2.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "webai-proxy 设置"
+  }
+}
