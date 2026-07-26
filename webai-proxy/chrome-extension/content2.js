@@ -244,10 +244,20 @@ async function waitForResponse(config, prevCount, promptText, timeoutMs = 300000
   const completionMethod = config.completionDetect?.method || "text-only";
 
   // 阶段一：等待新回复出现
+  let pollCount = 0;
   while (countResponses(config) <= prevCount) {
-    if (Date.now() - startTime > timeoutMs) throw new Error("等待回复超时：未检测到新回复");
+    if (Date.now() - startTime > timeoutMs) {
+      const cur = countResponses(config);
+      console.log(`[ai-bridge] 超时: prevCount=${prevCount} cur=${cur} selector=${config.responseArea?.selector} poll=${pollCount} elapsed=${Date.now()-startTime}ms`);
+      throw new Error("等待回复超时：未检测到新回复");
+    }
+    if (pollCount % 20 === 0) {
+      const cur = countResponses(config);
+      console.log(`[ai-bridge] poll: prevCount=${prevCount} cur=${cur} selector=${config.responseArea?.selector} poll=${pollCount}`);
+    }
     await waitVisible();
     await sleep(500);
+    pollCount++;
   }
   // 阶段二：等待生成完毕
   switch (completionMethod) {
@@ -423,6 +433,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendReply) => {
 async function handleAction(msg, config) {
   const { action, payload } = msg;
   const t = (label) => console.log(`[ai-bridge] ${label}`, new Date().toISOString());
+  const msgLen = payload?.message?.length || 0;
+  console.log(`[ai-bridge] handleAction: ${action} msgLen=${msgLen} selector=${config?.responseArea?.selector}`);
   try {
     switch (action) {
       case "new_session": {
@@ -430,7 +442,7 @@ async function handleAction(msg, config) {
         await startNewChat(config);
         await sleep(500);
         const prevCount = countResponses(config);
-        t(`new_session: 当前回复数=${prevCount}，准备输入`);
+        t(`new_session: 当前回复数=${prevCount}，准备输入(msgLen=${msgLen})`);
         await typeMessage(config, payload.message);
         t("new_session: 输入完成，点击发送");
         await clickSend(config);
@@ -444,7 +456,7 @@ async function handleAction(msg, config) {
         const prevCount = countResponses(config);
         t(`send_message: 当前回复数=${prevCount}`);
         await typeMessage(config, payload.message);
-        t("send_message: 输入完成，点击发送");
+        t("send_message: 输入完成(msgLen=${msgLen})，点击发送");
         await clickSend(config);
         t("send_message: 等待回复...");
         const text = await waitForResponse(config, prevCount, payload.message, 300000);

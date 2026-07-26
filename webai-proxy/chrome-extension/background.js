@@ -82,6 +82,9 @@ async function handleServerMessage(msg) {
 
     const response = await chrome.tabs.sendMessage(tab.id, { requestId, action, payload });
     wsLog("CS result: " + (response?.status || "unknown") + " " + (response?.response?.length || 0) + " chars");
+    if (response?.error) {
+      wsLog("CS error: " + response.error);
+    }
 
     if (response && response.status === "done") {
       sendResponse(requestId, true, { response: response.response, sessionUrl: response.sessionUrl });
