@@ -1,2 +1,0 @@
-<Once<{async block@src/server.rs:114:67: 114:72}> as Stream>::Item == Result<Event, Infallible>
-futures_util::stream::Chain<futures_util::stream::Iter<std::iter::Map<std::vec::IntoIter<std::string::String>, {closure@src/server.rs:97:58: 97:70}>>, futures_util::stream::Once<{async block@src/server.rs:114:67: 114:72}>>
