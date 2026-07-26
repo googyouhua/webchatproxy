@@ -92,7 +92,7 @@ jobs:
   release:
     name: Publish GitHub Release
     needs: [build, package-chrome-extension]
-    if: github.event_name == 'workflow_dispatch' && inputs.publish == 'true'
+    if: github.event_name == 'workflow_dispatch' && fromJSON(inputs.publish)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
