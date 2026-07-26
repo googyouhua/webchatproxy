@@ -243,21 +243,27 @@ async function waitForResponse(config, prevCount, promptText, timeoutMs = 300000
   const responseSelector = config.responseArea?.selector;
   const completionMethod = config.completionDetect?.method || "text-only";
 
-  // 阶段一：等待新回复出现
+  // 阶段一：等待新回复出现（支持 count 增加或同一元素文本变化）
+  let prevLastText = getLastResponse(config);
   let pollCount = 0;
-  while (countResponses(config) <= prevCount) {
+  while (true) {
     if (Date.now() - startTime > timeoutMs) {
       const cur = countResponses(config);
-      console.log(`[ai-bridge] 超时: prevCount=${prevCount} cur=${cur} selector=${config.responseArea?.selector} poll=${pollCount} elapsed=${Date.now()-startTime}ms`);
+      console.log(`[ai-bridge] 超时: prevCount=${prevCount} cur=${cur} prevTextLen=${prevLastText.length} curTextLen=${getLastResponse(config).length} selector=${config.responseArea?.selector} poll=${pollCount}`);
       throw new Error("等待回复超时：未检测到新回复");
     }
     if (pollCount % 20 === 0) {
       const cur = countResponses(config);
-      console.log(`[ai-bridge] poll: prevCount=${prevCount} cur=${cur} selector=${config.responseArea?.selector} poll=${pollCount}`);
+      const curText = getLastResponse(config);
+      console.log(`[ai-bridge] poll: prevCount=${prevCount} cur=${cur} textChanged=${curText !== prevLastText} selector=${config.responseArea?.selector} poll=${pollCount}`);
     }
     await waitVisible();
     await sleep(500);
     pollCount++;
+    const cur = countResponses(config);
+    if (cur > prevCount) break;
+    const curText = getLastResponse(config);
+    if (curText && curText !== prevLastText) break;
   }
   // 阶段二：等待生成完毕
   switch (completionMethod) {
