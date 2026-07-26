@@ -1,0 +1,6 @@
+target/
+*.log
+node_modules/
+.env
+ai-bridge/.git/
+

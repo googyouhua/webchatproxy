@@ -1,0 +1,13 @@
+{
+  "change": "ai-bridge-native",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "2172eb35a1c99744ed8b695f459b09e177475930406ef75dedb847509d2819c6",
+  "files": [
+    { "path": "openspec/changes/ai-bridge-native/proposal.md", "sha256": "0b9e257b8963947fcc3fa395b265fe58dce0eba50497dbb1f787b7e20b220918" },
+    { "path": "openspec/changes/ai-bridge-native/design.md", "sha256": "ee6db86ee9aa92edec37916d5e830d0abd6dd4e1abafabdaefb6af4aafe4ae8a" },
+    { "path": "openspec/changes/ai-bridge-native/tasks.md", "sha256": "4564dd3c79cf628e7c16d24b1791a8c83c6249ae91a66a1998bc5e33fe8d2a9e" }
+  ]
+}

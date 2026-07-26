@@ -1,0 +1,18 @@
+{
+  "change": "create-webai-proxy",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "0b541b26eff0e9ff1f6078786785c6147466e20ce3195104985dfa2ac7d2a1bb",
+  "files": [
+    { "path": "openspec/changes/create-webai-proxy/proposal.md", "sha256": "7fee8e4372cc4328d471bef98db7ab9a4ed53ef09ac37e83327c273b44ebd3d7" },
+    { "path": "openspec/changes/create-webai-proxy/design.md", "sha256": "a7acf1a178fe1f006e32598ecd6d447d6b53635f592f4751060eee3481c88704" },
+    { "path": "openspec/changes/create-webai-proxy/tasks.md", "sha256": "e59d47528cfb54d6f659f114b30fcbd253ca17ebceb423872f149ad966e541c2" },
+    { "path": "openspec/changes/create-webai-proxy/specs/auth/spec.md", "sha256": "2560a5220696ec605cf40e38682787e15bf405bea1333c781a5cd12c5aafca00" },
+    { "path": "openspec/changes/create-webai-proxy/specs/browser-chat-bridge/spec.md", "sha256": "a2148d77e8d29f0294f425f25cd5a22aabd3f6c577e3a3374526342dae6e3882" },
+    { "path": "openspec/changes/create-webai-proxy/specs/openai-api/spec.md", "sha256": "d40ce0b1fb5094b33b0652a89d38a4a5e4fef41421958da22f6b36730322a969" },
+    { "path": "openspec/changes/create-webai-proxy/specs/platform-abstraction/spec.md", "sha256": "5092f7e41a68b4f500dbccae635e4b0957ff9abc868faf97a851968d8e333365" },
+    { "path": "openspec/changes/create-webai-proxy/specs/sse-streaming/spec.md", "sha256": "99f45ec862ef26d738da826a583744a243d5399bef7410f9b8d36a33c28aeadb" }
+  ]
+}
