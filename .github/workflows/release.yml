@@ -2,10 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main]
     tags: ["v*"]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
     inputs:
       publish:
@@ -72,11 +69,31 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  package-chrome-extension:
+    name: Package Chrome Extension
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package Chrome extension
+        run: |
+          cd chrome-extension
+          zip -r ../../webai-proxy-chrome-extension.zip .
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webai-proxy-chrome-extension
+          path: webai-proxy-chrome-extension.zip
+          retention-days: 7
+
   release:
     name: Publish GitHub Release
-    needs: build
-    if: github.event_name == 'workflow_dispatch' && inputs.publish == 'true'
+    needs: [build, package-chrome-extension]
+    if: github.event_name == 'workflow_dispatch' && fromJSON(inputs.publish)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
     steps:
       - uses: actions/checkout@v4
         with:
@@ -85,9 +102,23 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
-          merge-multiple: true
+      - name: Flatten and rename assets
+        run: |
+          mkdir -p release-assets
+          for d in dist/*/; do
+            name=$(basename "$d")
+            for f in "$d"*; do
+              [ -f "$f" ] || continue
+              base=$(basename "$f")
+              case "$base" in
+                "$name"*) cp "$f" "release-assets/$base" ;;
+                *)        cp "$f" "release-assets/$name" ;;
+              esac
+            done
+          done
+          rm -rf dist/
       - name: List release assets
-        run: ls -lh dist/
+        run: ls -lh release-assets/
       - name: Generate release notes
         run: |
           echo "## webai-proxy ${{ github.ref_name }}" > release-body.md
@@ -101,5 +132,5 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
           make_latest: "true"
-          files: dist/*
+          files: release-assets/*
           token: ${{ secrets.GITHUB_TOKEN }}
