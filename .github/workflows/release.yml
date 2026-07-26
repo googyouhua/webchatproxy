@@ -91,6 +91,9 @@ jobs:
     needs: [build, package-chrome-extension]
     if: github.event_name == 'workflow_dispatch' && fromJSON(inputs.publish)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
     steps:
       - uses: actions/checkout@v4
         with:
