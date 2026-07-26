@@ -104,15 +104,16 @@ jobs:
           path: dist
       - name: Flatten and rename assets
         run: |
+          mkdir -p release-assets
           for d in dist/*/; do
             name=$(basename "$d")
             for f in "$d"*; do
-              [ -f "$f" ] && cp "$f" "dist/$name"
+              [ -f "$f" ] && cp "$f" "release-assets/$name"
             done
           done
-          rm -rf dist/*/
+          rm -rf dist/
       - name: List release assets
-        run: ls -lh dist/
+        run: ls -lh release-assets/
       - name: Generate release notes
         run: |
           echo "## webai-proxy ${{ github.ref_name }}" > release-body.md
@@ -126,5 +127,5 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
           make_latest: "true"
-          files: dist/*
+          files: release-assets/*
           token: ${{ secrets.GITHUB_TOKEN }}
