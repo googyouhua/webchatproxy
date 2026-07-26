@@ -72,9 +72,26 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  package-chrome-extension:
+    name: Package Chrome Extension
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package Chrome extension
+        run: |
+          cd chrome-extension
+          zip -r ../../webai-proxy-chrome-extension.zip .
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webai-proxy-chrome-extension
+          path: webai-proxy-chrome-extension.zip
+          retention-days: 7
+
   release:
     name: Publish GitHub Release
-    needs: build
+    needs: [build, package-chrome-extension]
     if: github.event_name == 'workflow_dispatch' && inputs.publish == 'true'
     runs-on: ubuntu-latest
     steps:
